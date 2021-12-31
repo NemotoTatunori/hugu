@@ -290,7 +290,7 @@ public class GameManager : MonoBehaviour
     IEnumerator LotteryProgress()
     {
         m_turn++;
-        m_turnText.text = m_turn + "‰ñ–ÚI";
+        m_turnText.text = m_turn + "‰ñ–Ú";
         int n = Random.Range(0, m_numbers.Count);
         int num = m_numbers[n];
         m_progressPanel.SetActive(true);
@@ -317,7 +317,6 @@ public class GameManager : MonoBehaviour
             m_progressAlphabet.text = "O";
         }
         yield return null;
-        /*
         while (true)
         {
             if (Input.GetMouseButtonUp(0))
@@ -349,7 +348,6 @@ public class GameManager : MonoBehaviour
             }
             yield return null;
         }
-        */
         m_progressPanel.SetActive(false);
         foreach (var item in m_numberBoardCells)
         {
