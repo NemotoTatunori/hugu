@@ -32,10 +32,14 @@ public class GameManager : MonoBehaviour
     Text m_progressAlphabet;
     Text m_progressNumber;
     Text m_turnText;
+    int m_maxPlayer = 30;
     float m_people = 0;
+    [SerializeField] Text m_peopleText = null;
     float m_winners = 0;
     int m_turn = 0;
-    [SerializeField] bool m_directingSkip = false;
+    bool m_directingSkip = false;
+    [SerializeField] Text m_directingSkipButton = null;
+    [SerializeField] GameObject m_settingPanel = null;
 
     void Start()
     {
@@ -167,20 +171,31 @@ public class GameManager : MonoBehaviour
     public void GameStart()
     {
         int p = m_nameList.transform.childCount;
-        m_players = new GameObject[p];
-        m_cards = new CardController[p];
-        for (int i = 0; i < p; i++)
+        if (p > 0)
         {
-            var card = Instantiate(m_cardPrefab);
-            m_cards[i] = card.transform.Find("Canvas/Card").gameObject.GetComponent<CardController>();
-            m_cards[i].NumberSet();
-            GameObject name = m_nameList.transform.GetChild(i).gameObject;
-            Text n = name.transform.GetChild(0).GetComponent<Text>();
-            m_cards[i].Rename(n.text);
-            m_players[i] = card;
+            m_players = new GameObject[p];
+            m_cards = new CardController[p];
+            for (int i = 0; i < p; i++)
+            {
+                var card = Instantiate(m_cardPrefab);
+                m_cards[i] = card.transform.Find("Canvas/Card").gameObject.GetComponent<CardController>();
+                m_cards[i].NumberSet();
+                GameObject name = m_nameList.transform.GetChild(i).gameObject;
+                Text n = name.transform.GetChild(0).GetComponent<Text>();
+                m_cards[i].Rename(n.text);
+                m_players[i] = card;
+            }
+            Leveling();
+            m_entryPanel.SetActive(false);
         }
-        Leveling();
-        m_entryPanel.SetActive(false);
+        else
+        {
+            if (m_coroutine != null)
+            {
+                StopCoroutine(m_coroutine);
+            }
+            m_coroutine = StartCoroutine(Caveat("一人もいないよ！"));
+        }
     }
     /// <summary>生成したカードを並べる</summary>
     void Leveling()
@@ -206,9 +221,10 @@ public class GameManager : MonoBehaviour
     /// <summary>名前リストに追加</summary>
     public void AddName()
     {
-        if (m_people < 30)
+        if (m_people < m_maxPlayer)
         {
             m_people++;
+            m_peopleText.text = m_people + "人";
             var name = Instantiate(m_entryNamePrefab);
             Text nameText = name.transform.GetChild(0).gameObject.GetComponent<Text>();
             nameText.text = m_entryName.text;
@@ -222,13 +238,14 @@ public class GameManager : MonoBehaviour
             {
                 StopCoroutine(m_coroutine);
             }
-            m_coroutine = StartCoroutine(Caveat());
+            m_coroutine = StartCoroutine(Caveat("参加できるのは"+ m_maxPlayer + "人まで！"));
         }
     }
     /// <summary>名前リストから消去</summary>
     public void RemoveName(GameObject nameObject)
     {
         m_people--;
+        m_peopleText.text = m_people + "人";
         Destroy(nameObject);
         m_nameList.sizeDelta = new Vector2(0, m_people * 50);
     }
@@ -267,14 +284,37 @@ public class GameManager : MonoBehaviour
             m_numbers.Add(i);
         }
         m_turn = 0;
+        m_winnerList.sizeDelta = new Vector2(0, 0);
         m_players = null;
         m_cards = null;
+        m_settingPanel.SetActive(false);
         m_entryPanel.SetActive(true);
     }
-
-    IEnumerator Caveat()
+    /// <summary>抽選演出スキップ切り替え</summary>
+    public void DirectingSkip()
+    {
+        if (m_directingSkip)
+        {
+            m_directingSkipButton.text = "抽選演出:ON";
+            m_directingSkip = false;
+        }
+        else
+        {
+            m_directingSkipButton.text = "抽選演出:OFF";
+            m_directingSkip = true;
+        }
+    }
+    /// <summary>設定画面開閉</summary>
+    public void SettingPanel(bool onOff)
+    {
+        m_settingPanel.SetActive(onOff);
+    }
+    /// <summary>人数警告</summary>
+    IEnumerator Caveat(string text)
     {
         m_caveat.SetActive(true);
+        Text caveatText = m_caveat.transform.GetChild(0).GetComponent<Text>();
+        caveatText.text = text;
         Image image = m_caveat.GetComponent<Image>();
         for (int i = 1; i < 11; i++)
         {
@@ -288,6 +328,7 @@ public class GameManager : MonoBehaviour
             }
             yield return new WaitForSeconds(0.1f);
         }
+        caveatText.text = "";
         m_caveat.SetActive(false);
     }
     /// <summary>抽選の進行</summary>
