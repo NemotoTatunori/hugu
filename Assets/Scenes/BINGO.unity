@@ -1514,7 +1514,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 883434128}
   m_HandleRect: {fileID: 883434127}
   m_Direction: 2
-  m_Value: 0.9999991
+  m_Value: 1
   m_Size: 0.88666666
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -2995,7 +2995,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 754135137}
   m_HandleRect: {fileID: 754135136}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3159,6 +3159,7 @@ MonoBehaviour:
   m_caveat: {fileID: 809198737}
   m_camera: {fileID: 963194225}
   m_progressPanel: {fileID: 622185585}
+  m_directingSkip: 1
 --- !u!4 &1339443685
 Transform:
   m_ObjectHideFlags: 0
@@ -4261,7 +4262,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2133887309}
   m_HandleRect: {fileID: 2133887308}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

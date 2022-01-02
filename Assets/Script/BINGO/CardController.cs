@@ -8,8 +8,10 @@ public class CardController : MonoBehaviour
     [SerializeField] CellController m_cellPrefab = null;
     [SerializeField] GameObject m_bingPanel;
     [SerializeField] Text m_nameText;
+    [SerializeField] GameObject m_reachImage = null;
     string m_myName;
     bool m_bingo = false;
+    bool m_reach = false;
     int m_row = 5;
     int m_col = 5;
     CellController[,] m_cells;
@@ -83,48 +85,72 @@ public class CardController : MonoBehaviour
     /// <summary>‚±‚±‚Åƒrƒ“ƒS‚ª‚É‚È‚Á‚Ä‚¢‚é‚©”»’è‚·‚é</summary>
     void Judgement()
     {
-
+        int hit = 0;
         for (int r = 0; r < m_row; r++)
         {
-            if (m_cells[r, 0].Open == true &&
-                m_cells[r, 1].Open == true &&
-                m_cells[r, 2].Open == true &&
-                m_cells[r, 3].Open == true &&
-                m_cells[r, 4].Open == true)
+            for (int i = 0; i < m_col; i++)
+            {
+                if (m_cells[r, i].Open == true)
+                {
+                    hit++;
+                }
+            }
+            if (Hit(hit))
             {
                 Bingo();
                 return;
+            }
+            else
+            {
+                hit = 0;
             }
         }
 
         for (int c = 0; c < m_col; c++)
         {
-            if (m_cells[0, c].Open == true &&
-                m_cells[1, c].Open == true &&
-                m_cells[2, c].Open == true &&
-                m_cells[3, c].Open == true &&
-                m_cells[4, c].Open == true)
+            for (int i = 0; i < m_row; i++)
+            {
+                if (m_cells[i, c].Open == true)
+                {
+                    hit++;
+                }
+            }
+            if (Hit(hit))
             {
                 Bingo();
                 return;
             }
+            else
+            {
+                hit = 0;
+            }
         }
 
-        if (m_cells[0, 0].Open == true &&
-            m_cells[1, 1].Open == true &&
-            m_cells[2, 2].Open == true &&
-            m_cells[3, 3].Open == true &&
-            m_cells[4, 4].Open == true)
+        for (int i = 0; i < m_row; i++)
+        {
+            if (m_cells[i, i].Open == true)
+            {
+                hit++;
+            }
+        }
+        if (Hit(hit))
         {
             Bingo();
             return;
         }
+        else
+        {
+            hit = 0;
+        }
 
-        if (m_cells[0, 4].Open == true &&
-            m_cells[1, 3].Open == true &&
-            m_cells[2, 2].Open == true &&
-            m_cells[3, 1].Open == true &&
-            m_cells[4, 0].Open == true)
+        for (int i = 0; i < m_row; i++)
+        {
+            if (m_cells[4 - i, i].Open == true)
+            {
+                hit++;
+            }
+        }
+        if (Hit(hit))
         {
             Bingo();
             return;
@@ -135,7 +161,22 @@ public class CardController : MonoBehaviour
     {
         m_bingo = true;
         m_bingPanel.SetActive(true);
+        m_reachImage.SetActive(false);
         GameManager gameManager = FindObjectOfType<GameManager>();
         gameManager.Bingo(m_myName);
+    }
+
+    bool Hit(int hit)
+    {
+        if (hit == 5)
+        {
+            return true;
+        }
+        else if (hit == 4 && !m_reach)
+        {
+            m_reachImage.SetActive(true);
+            m_reach = true;
+        }
+        return false;
     }
 }

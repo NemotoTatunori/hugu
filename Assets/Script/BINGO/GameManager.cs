@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     float m_people = 0;
     float m_winners = 0;
     int m_turn = 0;
+    [SerializeField] bool m_directingSkip = false;
 
     void Start()
     {
@@ -293,7 +294,6 @@ public class GameManager : MonoBehaviour
         m_turnText.text = m_turn + "‰ñ–Ú";
         int n = Random.Range(0, m_numbers.Count);
         int num = m_numbers[n];
-        m_progressPanel.SetActive(true);
         m_progressNumber.text = num.ToString();
         m_progressCovar.anchoredPosition = new Vector2(0, 0);
         if (num <= 15)
@@ -317,38 +317,42 @@ public class GameManager : MonoBehaviour
             m_progressAlphabet.text = "O";
         }
         yield return null;
-        while (true)
+        if (!m_directingSkip)
         {
-            if (Input.GetMouseButtonUp(0))
+            m_progressPanel.SetActive(true);
+            while (true)
             {
-                break;
+                if (Input.GetMouseButtonUp(0))
+                {
+                    break;
+                }
+                yield return null;
             }
-            yield return null;
-        }
-        for (int i = 0; i > -100; i--)
-        {
-            m_progressCovar.anchoredPosition = new Vector2(0, i);
-            yield return null;
-        }
-        while (true)
-        {
-            if (Input.GetMouseButtonUp(0))
+            for (int i = 0; i > -100; i--)
             {
-                break;
+                m_progressCovar.anchoredPosition = new Vector2(0, i);
+                yield return null;
             }
-            yield return null;
-        }
-        m_progressCovar.anchoredPosition = new Vector2(0, -200);
-        yield return null;
-        while (true)
-        {
-            if (Input.GetMouseButtonUp(0))
+            while (true)
             {
-                break;
+                if (Input.GetMouseButtonUp(0))
+                {
+                    break;
+                }
+                yield return null;
             }
+            m_progressCovar.anchoredPosition = new Vector2(0, -200);
             yield return null;
+            while (true)
+            {
+                if (Input.GetMouseButtonUp(0))
+                {
+                    break;
+                }
+                yield return null;
+            }
+            m_progressPanel.SetActive(false);
         }
-        m_progressPanel.SetActive(false);
         foreach (var item in m_numberBoardCells)
         {
             if (item.MyNumber == num)
