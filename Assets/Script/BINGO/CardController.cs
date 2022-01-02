@@ -32,7 +32,7 @@ public class CardController : MonoBehaviour
             //‚±‚±‚Å”š‚ğ”í‚ç‚È‚¢‚æ‚¤‚É‚µ‚Ä‚¢‚é
             int[] numbers = new int[m_col];
             List<int> nums = new List<int>();
-            for (int i = 1 + 15 * r; i < 15 + 15 * r; i++)
+            for (int i = 1 + 15 * r; i < 16 + 15 * r; i++)
             {
                 nums.Add(i);
             }
