@@ -54,6 +54,7 @@ public class GameManager : MonoBehaviour
                 var cell = Instantiate(m_numberBoardCellPrefab);
                 cell.transform.SetParent(m_numberBoard.transform);
                 cell.MyNumber = 1 + r + 15 * c;
+                cell.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
                 m_numberBoardCells[r, c] = cell;
             }
         }
@@ -212,6 +213,7 @@ public class GameManager : MonoBehaviour
             Text nameText = name.transform.GetChild(0).gameObject.GetComponent<Text>();
             nameText.text = m_entryName.text;
             name.transform.SetParent(m_nameList);
+            name.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
             m_nameList.sizeDelta = new Vector2(0, m_people * 50);
         }
         else
@@ -239,6 +241,7 @@ public class GameManager : MonoBehaviour
         winnerName.transform.GetChild(0).gameObject.GetComponent<Text>().text = name;
         winnerName.transform.GetChild(1).gameObject.GetComponent<Text>().text = m_turn.ToString();
         winnerName.transform.SetParent(m_winnerList.transform);
+        winnerName.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
     }
     /// <summary>ÉGÉìÉgÉäÅ[âÊñ Ç…ñﬂÇÈ</summary>
     public void EntryReturn()
