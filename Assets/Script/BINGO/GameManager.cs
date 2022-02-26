@@ -24,7 +24,8 @@ public class GameManager : MonoBehaviour
     float m_cameraX = 0;
     float m_cameraY = 0;
     float m_cameraZ = 0;
-    float m_moveSpeed = 2;
+    [SerializeField] float m_moveSpeed = 200;
+    float m_moveX = 0;
     float m_moveY = 0;
     [SerializeField] GameObject m_progressPanel = null;
     GameObject m_progressLottery;
@@ -32,7 +33,7 @@ public class GameManager : MonoBehaviour
     Text m_progressAlphabet;
     Text m_progressNumber;
     Text m_turnText;
-    int m_maxPlayer = 30;
+    int m_maxPlayer = 100;
     float m_people = 0;
     [SerializeField] Text m_peopleText = null;
     float m_winners = 0;
@@ -85,7 +86,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                m_cameraY += m_moveSpeed;
+                m_cameraY += Time.deltaTime * m_moveSpeed;
                 CameraMove();
             }
         }
@@ -97,19 +98,19 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                m_cameraY -= m_moveSpeed;
+                m_cameraY -= Time.deltaTime * m_moveSpeed;
                 CameraMove();
             }
         }
         if (Input.GetKey(KeyCode.D))
         {
-            if (m_cameraX > 800)
+            if (m_cameraX > m_moveX * 160)
             {
                 return;
             }
             else
             {
-                m_cameraX += m_moveSpeed;
+                m_cameraX += Time.deltaTime * m_moveSpeed;
                 CameraMove();
             }
         }
@@ -121,7 +122,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                m_cameraX -= m_moveSpeed;
+                m_cameraX -= Time.deltaTime * m_moveSpeed;
                 CameraMove();
             }
         }
@@ -133,7 +134,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                m_cameraZ += m_moveSpeed;
+                m_cameraZ += Time.deltaTime * m_moveSpeed;
                 CameraMove();
             }
         }
@@ -145,7 +146,7 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                m_cameraZ -= m_moveSpeed;
+                m_cameraZ -= Time.deltaTime * m_moveSpeed;
                 CameraMove();
             }
         }
@@ -202,16 +203,23 @@ public class GameManager : MonoBehaviour
     {
         int r = 0;
         int c = 0;
+        int newLine = 5;
+        if (m_players.Length >= 60)
+        {
+            newLine = m_players.Length / 10;
+            Debug.Log(newLine);
+        }
         for (int i = 0; i < m_players.Length; i++)
         {
             m_players[i].transform.position = new Vector3(r * 200, c * -300, 0);
             r++;
-            if (r == 5)
+            if (r == newLine)
             {
                 r = 0;
                 c++;
             }
         }
+        m_moveX = newLine;
         m_moveY = c;
         if (m_players.Length % 5 == 0)
         {
@@ -238,7 +246,7 @@ public class GameManager : MonoBehaviour
             {
                 StopCoroutine(m_coroutine);
             }
-            m_coroutine = StartCoroutine(Caveat("参加できるのは"+ m_maxPlayer + "人まで！"));
+            m_coroutine = StartCoroutine(Caveat("参加できるのは" + m_maxPlayer + "人まで！"));
         }
     }
     /// <summary>名前リストから消去</summary>
@@ -338,6 +346,7 @@ public class GameManager : MonoBehaviour
         m_turnText.text = m_turn + "回目";
         int n = Random.Range(0, m_numbers.Count);
         int num = m_numbers[n];
+        float down = 0;
         m_progressNumber.text = num.ToString();
         m_progressCovar.anchoredPosition = new Vector2(0, 0);
         if (num <= 15)
@@ -372,11 +381,15 @@ public class GameManager : MonoBehaviour
                 }
                 yield return null;
             }
-            for (int i = 0; i > -100; i--)
+            while (down > -100)
             {
-                m_progressCovar.anchoredPosition = new Vector2(0, i);
+                down -= Time.deltaTime * 60;
+                m_progressCovar.anchoredPosition = new Vector2(0, down);
                 yield return null;
             }
+            down = -100;
+            m_progressCovar.anchoredPosition = new Vector2(0, down);
+            yield return null;
             while (true)
             {
                 if (Input.GetMouseButtonUp(0))
