@@ -9,15 +9,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] NumberBoardCell m_numberBoardCellPrefab = null;
     [SerializeField] GridLayoutGroup m_numberBoard = null;
     NumberBoardCell[,] m_numberBoardCells;
-    [SerializeField] GameObject m_cardPrefab = null;
-    GameObject[] m_players;
+    [SerializeField] CardController m_cardPrefab = null;
     CardController[] m_cards;
     Coroutine m_coroutine;
     [SerializeField] GameObject m_entryPanel = null;
     [SerializeField] RectTransform m_winnerList = null;
     [SerializeField] GameObject m_winnerNamePrefab = null;
     [SerializeField] InputField m_entryName = null;
-    [SerializeField] GameObject m_entryNamePrefab = null;
+    [SerializeField] EntryName m_entryNamePrefab = null;
     [SerializeField] RectTransform m_nameList = null;
     [SerializeField] GameObject m_caveat = null;
     [SerializeField] GameObject m_camera = null;
@@ -41,11 +40,14 @@ public class GameManager : MonoBehaviour
     bool m_directingSkip = false;
     [SerializeField] Text m_directingSkipButton = null;
     [SerializeField] GameObject m_settingPanel = null;
+    [SerializeField] Image m_fadePanel = null;
+    [SerializeField] ResultPanel m_resultPanel = null;
+    GameObject[] m_winnerPrayers;
 
     void Start()
     {
         //ここで抽選機に１から７５までの数字を入れている
-        for (int i = 1; i < 76; i++)
+        for (int i = 1; i <= 75; i++)
         {
             m_numbers.Add(i);
         }
@@ -74,6 +76,8 @@ public class GameManager : MonoBehaviour
         m_turnText = m_progressPanel.transform.GetChild(2).gameObject.GetComponent<Text>();
         m_progressAlphabet = m_progressLottery.transform.GetChild(0).gameObject.GetComponent<Text>();
         m_progressNumber = m_progressLottery.transform.GetChild(1).gameObject.GetComponent<Text>();
+
+        StartCoroutine(FadeInOut(true));
     }
 
     void Update()
@@ -174,20 +178,7 @@ public class GameManager : MonoBehaviour
         int p = m_nameList.transform.childCount;
         if (p > 0)
         {
-            m_players = new GameObject[p];
-            m_cards = new CardController[p];
-            for (int i = 0; i < p; i++)
-            {
-                var card = Instantiate(m_cardPrefab);
-                m_cards[i] = card.transform.Find("Canvas/Card").gameObject.GetComponent<CardController>();
-                m_cards[i].NumberSet();
-                GameObject name = m_nameList.transform.GetChild(i).gameObject;
-                Text n = name.transform.GetChild(0).GetComponent<Text>();
-                m_cards[i].Rename(n.text);
-                m_players[i] = card;
-            }
-            Leveling();
-            m_entryPanel.SetActive(false);
+            StartCoroutine(GameSetting(p));
         }
         else
         {
@@ -204,14 +195,14 @@ public class GameManager : MonoBehaviour
         int r = 0;
         int c = 0;
         int newLine = 5;
-        if (m_players.Length >= 60)
+        if (m_cards.Length >= 60)
         {
-            newLine = m_players.Length / 10;
+            newLine = m_cards.Length / 10;
             Debug.Log(newLine);
         }
-        for (int i = 0; i < m_players.Length; i++)
+        for (int i = 0; i < m_cards.Length; i++)
         {
-            m_players[i].transform.position = new Vector3(r * 200, c * -300, 0);
+            m_cards[i].gameObject.transform.position = new Vector3(r * 200, c * -300, 0);
             r++;
             if (r == newLine)
             {
@@ -221,7 +212,7 @@ public class GameManager : MonoBehaviour
         }
         m_moveX = newLine;
         m_moveY = c;
-        if (m_players.Length % 5 == 0)
+        if (m_cards.Length % 5 == 0)
         {
             m_moveY--;
         }
@@ -234,8 +225,7 @@ public class GameManager : MonoBehaviour
             m_people++;
             m_peopleText.text = m_people + "人";
             var name = Instantiate(m_entryNamePrefab);
-            Text nameText = name.transform.GetChild(0).gameObject.GetComponent<Text>();
-            nameText.text = m_entryName.text;
+            name.Setting(m_entryName.text, () => RemoveName(name.gameObject));
             name.transform.SetParent(m_nameList);
             name.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
             m_nameList.sizeDelta = new Vector2(0, m_people * 50);
@@ -250,7 +240,7 @@ public class GameManager : MonoBehaviour
         }
     }
     /// <summary>名前リストから消去</summary>
-    public void RemoveName(GameObject nameObject)
+    void RemoveName(GameObject nameObject)
     {
         m_people--;
         m_peopleText.text = m_people + "人";
@@ -260,20 +250,26 @@ public class GameManager : MonoBehaviour
     /// <summary>ビンゴした人をリストに入れる</summary>
     public void Bingo(string name)
     {
+        var winnerName = Instantiate(m_winnerNamePrefab);
+        m_winnerPrayers[(int)m_winners] = winnerName;
         m_winners++;
         m_winnerList.sizeDelta = new Vector2(0, m_winners * 30);
-        var winnerName = Instantiate(m_winnerNamePrefab);
         winnerName.transform.GetChild(0).gameObject.GetComponent<Text>().text = name;
         winnerName.transform.GetChild(1).gameObject.GetComponent<Text>().text = m_turn.ToString();
         winnerName.transform.SetParent(m_winnerList.transform);
         winnerName.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+        if (m_winners == m_cards.Length)
+        {
+            m_resultPanel.gameObject.SetActive(true);
+            StartCoroutine(m_resultPanel.Result(m_winnerPrayers));
+        }
     }
     /// <summary>エントリー画面に戻る</summary>
     public void EntryReturn()
     {
-        foreach (var item in m_players)
+        foreach (var item in m_cards)
         {
-            Destroy(item);
+            Destroy(item.gameObject);
         }
         foreach (var item in m_numberBoardCells)
         {
@@ -293,9 +289,10 @@ public class GameManager : MonoBehaviour
         }
         m_turn = 0;
         m_winnerList.sizeDelta = new Vector2(0, 0);
-        m_players = null;
+        m_winners = 0;
         m_cards = null;
         m_settingPanel.SetActive(false);
+        m_resultPanel.ObjectReset();
         m_entryPanel.SetActive(true);
     }
     /// <summary>抽選演出スキップ切り替え</summary>
@@ -316,6 +313,29 @@ public class GameManager : MonoBehaviour
     public void SettingPanel(bool onOff)
     {
         m_settingPanel.SetActive(onOff);
+    }
+    /// <summary>
+    /// ゲーム画面のセッティング
+    /// </summary>
+    /// <param name="p">人数</param>
+    /// <returns></returns>
+    IEnumerator GameSetting(int p)
+    {
+        yield return StartCoroutine(FadeInOut(false));
+        m_cards = new CardController[p];
+        m_winnerPrayers = new GameObject[p];
+        for (int i = 0; i < p; i++)
+        {
+            var card = Instantiate(m_cardPrefab);
+            m_cards[i] = card;
+            m_cards[i].NumberSet();
+            GameObject name = m_nameList.transform.GetChild(i).gameObject;
+            Text n = name.transform.GetChild(0).GetComponent<Text>();
+            m_cards[i].Rename(n.text);
+        }
+        Leveling();
+        m_entryPanel.SetActive(false);
+        yield return StartCoroutine(FadeInOut(true));
     }
     /// <summary>人数警告</summary>
     IEnumerator Caveat(string text)
@@ -422,5 +442,31 @@ public class GameManager : MonoBehaviour
             item.GetNumber(num);
         }
         m_numbers.Remove(num);
+    }
+    /// <summary>フェードパネル操作</summary>
+    IEnumerator FadeInOut(bool inOud)
+    {
+        m_fadePanel.gameObject.SetActive(true);
+        float s = m_fadePanel.color.a;
+        float e = inOud ? 0 : 1;
+        if (inOud)
+        {
+            while (s >= e)
+            {
+                s -= Time.deltaTime / 2;
+                m_fadePanel.color = new Color(0, 0, 0, s);
+                yield return null;
+            }
+        }
+        else
+        {
+            while (s <= e)
+            {
+                s += Time.deltaTime / 2;
+                m_fadePanel.color = new Color(0, 0, 0, s);
+                yield return null;
+            }
+        }
+        m_fadePanel.gameObject.SetActive(false);
     }
 }

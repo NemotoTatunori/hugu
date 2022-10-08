@@ -9,6 +9,7 @@ public class CardController : MonoBehaviour
     [SerializeField] GameObject m_bingPanel;
     [SerializeField] Text m_nameText;
     [SerializeField] GameObject m_reachImage = null;
+    [SerializeField] Transform m_cellTransfoem = null;
     string m_myName;
     bool m_bingo = false;
     bool m_reach = false;
@@ -24,7 +25,7 @@ public class CardController : MonoBehaviour
         {
             for (int c = 0; c < m_col; c++)
             {
-                m_cells[r, c] = Instantiate(m_cellPrefab, new Vector3(-50 + 25 * r, 20 - 25 * c, 200), Quaternion.identity, this.transform);
+                m_cells[r, c] = Instantiate(m_cellPrefab, new Vector3(-50 + 25 * r, 20 - 25 * c, 200), Quaternion.identity, m_cellTransfoem);
             }
         }
 

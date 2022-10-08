@@ -1,5 +1,40 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1193283293952702128
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5661714304253627500}
+  m_Layer: 5
+  m_Name: CellParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &5661714304253627500
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193283293952702128}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7913208481701481769}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6314857850073304494
 GameObject:
   m_ObjectHideFlags: 0
@@ -189,7 +224,7 @@ RectTransform:
   m_Children:
   - {fileID: 7600029418222464873}
   m_Father: {fileID: 7913208481701481769}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -417,6 +452,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7913208482678823979}
+  - {fileID: 5661714304253627500}
   - {fileID: 7556994753412012366}
   m_Father: {fileID: 7913208481956968873}
   m_RootOrder: 0
@@ -727,6 +763,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7913208481956968873}
+  - component: {fileID: 4017064363219516935}
   m_Layer: 0
   m_Name: CardPrefab
   m_TagString: Untagged
@@ -749,6 +786,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4017064363219516935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7913208481956968874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5a22ec07724ca14e8de67548f81c1f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_cellPrefab: {fileID: 274735228657576560, guid: 5a0af3eab6b5092458638092b962eb85,
+    type: 3}
+  m_bingPanel: {fileID: 7252009538919787323}
+  m_nameText: {fileID: 7913208482356136558}
+  m_reachImage: {fileID: 8487010370969758910}
+  m_cellTransfoem: {fileID: 5661714304253627500}
 --- !u!1 &7913208482004007085
 GameObject:
   m_ObjectHideFlags: 0
@@ -1309,7 +1364,6 @@ GameObject:
   - component: {fileID: 7913208482678823979}
   - component: {fileID: 7913208482678823976}
   - component: {fileID: 7913208482678823977}
-  - component: {fileID: 7913208482678823978}
   m_Layer: 5
   m_Name: Card
   m_TagString: Untagged
@@ -1324,7 +1378,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7913208482678823972}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1381,23 +1435,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7913208482678823978
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7913208482678823972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5a22ec07724ca14e8de67548f81c1f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_cellPrefab: {fileID: 274735228657576560, guid: 5a0af3eab6b5092458638092b962eb85,
-    type: 3}
-  m_bingPanel: {fileID: 7252009538919787323}
-  m_nameText: {fileID: 7913208482356136558}
-  m_reachImage: {fileID: 8487010370969758910}
 --- !u!1 &8487010370969758910
 GameObject:
   m_ObjectHideFlags: 0
